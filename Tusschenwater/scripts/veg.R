@@ -2,16 +2,35 @@ setwd("/home/merijn/Documents/Nijmegen_Stu_As/Project_Vegetation_Proxy/R/Tussche
 
 require(rgdal)
 require(rgeos)
+require(raster)
+
+## Load files
 
 twater <- readOGR("source/Tusschenwater_boundaries","Tusschenwater_boundaries")
 vegmap <- readOGR("source/veg_map_twater","veg_map_tusschenwater")
+peatthick <- raster("source/veenraster.tif")
 
-veg_type <- c('vochtig hooiland','pitrus','rietmoeras')
-GWPpot <- c('31.5','14.5','6.5')
+## crop and mask peat thickness for area
 
-GWPtable <- data.frame(veg_type, GWPpot)
+peatthick_crop <- crop(peatthick, twater)
+peatthick_mask <- mask(peatthick, twater)
+peatthick <- peatthick_mask
 
-vegmap <- merge(vegmap,GWPtable,by ="veg_type", all.x=TRUE)
+
+
+## rasterize vegmap
+
+vege_raster <- rasterize(vegmap["GWP"],peatthick_mask, field = "GWP")
+
+## Remove peat shallower than 30 cm
+for(i in 1:length(peatthick)) {
+  if (!is.na(peatthick[i])) {
+    if (peatthick[i] < 30) {peatthick[i] <- NA}
+  }
+}
+
+
+## calculate area of vegetation map
 
 vegmap$area <- gArea(vegmap, byid = T)/10000
 

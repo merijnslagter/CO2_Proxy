@@ -20,7 +20,7 @@ vege <- readOGR("source/Tusschenwater/veg_map_twater","vege_map")
 peatthick <- raster("source/Tusschenwater/Tusschenwater_veendikte/Tusschenwater_veendikte.tif")
 
 #get water level out of vegetation
-vege_raster <- rasterize(vege,peatthick,field="id", fun="last")
+vege_raster <- rasterize(vege,peatthick)
 wl <- vege_raster
 for (i in 1:length(vege_raster)) {
   if (!is.na(vege_raster[i]) & !is.na(wl[i])) {
@@ -30,6 +30,12 @@ for (i in 1:length(vege_raster)) {
   }
 }
 
+#exclude peat less than 30cm thick
+for(i in 1:length(peatthick)) {
+  if (!is.na(peatthick[i])) {
+    if (peatthick[i] < 30) {peatthick[i] <- NA}
+  }
+}
 
 #calculate emissions
 emission <- peatthick_pair

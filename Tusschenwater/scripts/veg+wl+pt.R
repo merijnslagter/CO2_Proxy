@@ -4,6 +4,7 @@ setwd("D:/vegetation_emission")
 require(rgdal)
 require(rgeos)
 require(raster)
+require(spatialEco)
 
 #define function
 vegetation_proxy <- function (wl = 30, peatthick = 10) {
@@ -38,12 +39,16 @@ for(i in 1:length(peatthick)) {
 }
 
 #calculate emissions
-emission <- peatthick_pair
-for (i in 1:length(peatthick_pair)) {
+emission <- peatthick
+for (i in 1:length(peatthick)) {
   if (!is.na(peatthick[i]) & !is.na(wl[i])) {
     emission[i] <- vegetation_proxy(wl[i], peatthick[i])}
+  else {emission[i] <- NA}
 }
+writeRaster(emission,"inter/emission_twater.tif", datatype='FLT4S', overwrite=TRUE)
 
-
-
-
+#mean and sum emissions for each vegetation type
+emission_vegmean <- zonal.stats(vege, emission, stat = mean)
+vege_area <- gArea(vege,byid = TRUE) / 10000
+vege_area <- as.numeric(vege_area)
+emission_vegsum <- vege_area * emission_vegmean

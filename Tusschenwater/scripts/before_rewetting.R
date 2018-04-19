@@ -23,3 +23,4 @@ peatthick_mask <- mask(peatthick, twater)
 writeRaster(gvgnow_mask,"inter/gvgnow_mask.tif", datatype='FLT4S', overwrite=TRUE)
 writeRaster(gvgfuture_mask,"inter/gvgfuture_mask.tif", datatype='FLT4S', overwrite=TRUE)
 writeRaster(peatthick_mask,"inter/peatthick_mask.tif", datatype='FLT4S', overwrite=TRUE)
+#me

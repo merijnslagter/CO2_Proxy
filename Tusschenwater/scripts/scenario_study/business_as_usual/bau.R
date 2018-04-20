@@ -13,12 +13,8 @@ setwd("/home/merijn/Documents/Nijmegen_Stu_As/Project_Vegetation_Proxy/R/Tussche
 
 ## Laad bestanden
 
-peatthick <- raster("inter/peatthick_mask.tif")
+peatthick <- raster("source/veendikte.tif")
 landuse <- readOGR("source/landuse_with_factors","landuse_with_factors")
-
-## Rasterize landuse
-
-co2 <- rasterize(landuse, peatthick, field = "CO2")
 
 ## Exclude peat shallower than 30 cm
 
@@ -28,11 +24,17 @@ for(i in 1:length(peatthick)) {
   }
 }
 
+## Rasterize landuse
+
+co2 <- rasterize(landuse, peatthick, field = "CO2")
+
 ## calculate co2 emissies per cell
 
 co2sumraster <- peatthick
 co2sumraster[!is.na(co2sumraster)][] <- 1
 co2sumraster <- co2sumraster * co2 * 30
+
+writeRaster(co2sumraster,"final/co2_twater_bau_30years_phase_01.tif", datatype='FLT4S', overwrite=TRUE)
 
 ## Calculate average
 

@@ -9,8 +9,8 @@ require(spatialEco)
 #define function
 vegetation_proxy <- function (wl = 30, peatthick = 10) {
   ifelse(wl < peatthick, peat<- wl, peat <- peatthick)
-  if (peat < 20) {peat <- 20}
   emission <- 0.5 * peat
+  if (emission < 1) {emission <- 1}
   if (emission > 50) {emission <- 50}
   return(emission)
 }

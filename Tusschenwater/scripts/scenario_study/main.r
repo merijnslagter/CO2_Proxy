@@ -21,7 +21,7 @@ peatthick0 <- peatthick_mask
 #pair wl & peatthick, changing unit
 crs(wl0) <- crs(peatthick0)
 wl0 <- resample(wl0, peatthick0)
-for(i in 1:length(wl0)) {wl0[i] <- wl0[i] * 100}
+wl0 <- wl0 * 100
 
 ## define functions ##
 
@@ -57,10 +57,10 @@ i <- 0
 while (i < interval_num){
   i <- i + 1
   
-  #exclude peat less than 30cm
+  #exclude peat depleted
   for (p in 1:length(peatthick)) {
     if (!is.na(peatthick[p])) {
-      if (peatthick[p] < 30) {peatthick[p] <- NA}
+      if (peatthick[p] <= 0) {peatthick[p] <- NA}
     }
   }
   
